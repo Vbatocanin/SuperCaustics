@@ -4,8 +4,11 @@
 import os
 import sys
 import time
+
 from pykeyboard import PyKeyboard
-from Probe_utils import MK, Probe, WindowMgr, KeyUtils, generate_settings
+from win32gui import SetForegroundWindow, FindWindow
+
+from Probe_utils import Probe, WindowMgr, KeyUtils, generate_settings
 
 LINUX = 'linux'
 WINDOWS = 'win32'
@@ -18,15 +21,11 @@ if sys.platform == LINUX:
     os.system('wmctrl -a ' + gameName)
 elif sys.platform == WINDOWS:
     # In Windows, we can use the class defined above
-    w = WindowMgr()
-    w.find_window_wildcard(".*64-bit/Windows")
-    #w.find_window_wildcard(".*(64-bit Development PCD3D_SM5)")
-    #w.find_window_wildcard(".*Unreal Editor")
-    w.set_foreground()
+    handle = FindWindow(0, "AIP_nVRTX - Unreal Editor")
+    SetForegroundWindow(handle)
 
-
-interval = 0.05 #Interval in seconds
-moves_file = "ProbeLog\Supercaustics_12Cameras.txt"
+interval = 0.05  #Interval in seconds
+moves_file = "ProbeLog\Supercaustics_12Cacmeras.txt"
 
 ku = KeyUtils()
 pkey = Probe()
@@ -62,7 +61,7 @@ for action in list(file.readlines()):
    
     pkey.reset()
 
-    if ToteBox % 20 == 0:
+    if counter % 3 == 0:
         k.tap_key('U', n=1, interval=interval)
 
      #Wait for physics to settle & Textures to load. Adjust to system performance
@@ -88,13 +87,3 @@ for action in list(file.readlines()):
 
 # Pause at the end to avoid transitioning away from the game too abruptly
 time.sleep(0.5)
-
-# Switch focus back to the Python window
-if sys.platform == LINUX:
-    # Using Alt-Tab in Linux. A more robust way would be to identify the
-    # window from which the script was launched
-    ku.alt_tab()
-elif sys.platform == WINDOWS:
-    # Assumes that the Python script was launched from a command window
-    w.find_window_wildcard(".*PyCharm*.")
-    w.set_foreground()

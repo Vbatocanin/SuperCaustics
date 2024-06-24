@@ -15,7 +15,6 @@ elif sys.platform == WINDOWS:
 print("whatever")
 
 def generate_settings(n_settings=3, file_name=None):
-
     file = open(file_name, 'w')
     for i in range(n_settings):
         Mat = np.random.randint(0, 8)  #13 #choose between 42 materials.
@@ -32,7 +31,7 @@ class Probe:
 
     def press(self, key):
         self.k.press_key(key)
-        time.sleep(0.5)
+        time.sleep(0.1)
         self.k.release_key(key)
 
     def screenshot(self):
@@ -62,14 +61,14 @@ class Probe:
     def capture(self):
         
         self.rtx()     #ON
-        time.sleep(0.2)
+        time.sleep(0.5)
         self.screenshot()
 
-        time.sleep(0.1)
+        time.sleep(0.5)
         self.no_caustic()    #CausticOFF
-        time.sleep(0.1)
+        time.sleep(0.5)
         self.screenshot()
-        time.sleep(0.1)
+        time.sleep(0.5)
         self.rtx()     #OFF
         self.no_caustic()        #CuasticON
 
@@ -163,6 +162,26 @@ class KeyUtils:
             for line in f.readline():
                 yield int(line)
 
+
+import win32gui
+
+
+def window_enum_handler(hwnd, resultList):
+    if win32gui.IsWindowVisible(hwnd) and win32gui.GetWindowText(hwnd) != '':
+        resultList.append((hwnd, win32gui.GetWindowText(hwnd)))
+
+
+def get_app_list(handles=[]):
+    mlst = []
+    win32gui.EnumWindows(window_enum_handler, handles)
+    for handle in handles:
+        mlst.append(handle)
+    return mlst
+
+if __name__ == '__main__':
+    appwindows = get_app_list()
+    for i in appwindows:
+        print(i)
 
 MK = {}
 MK['LOOK_UP'] = [5]
